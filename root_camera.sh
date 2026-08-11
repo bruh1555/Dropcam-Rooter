@@ -68,7 +68,7 @@ for ((i=1; i<=MAX_RETRIES; i++)); do
         echo "  [✓] Detected USB Ethernet interface: $USB_IFACE"
         break
     fi
-    sleep 1
+    sleep 2
 done
 
 if [ -z "$USB_IFACE" ]; then
@@ -109,7 +109,7 @@ for ((i=1; i<=PING_RETRIES; i++)); do
         break
     fi
     echo "  ... waiting for link (attempt $i/$PING_RETRIES)"
-    sleep 1
+    sleep 2
 done
 
 if [ $PING_SUCCESS -eq 0 ]; then
@@ -126,7 +126,7 @@ NC_PID=$!
 
 echo "[+] Initializing NAND driver and dumping stock configuration partition from camera..."
 (
-  sleep 1
+  sleep 2
   echo "echo ambarella-nand > /sys/bus/platform/drivers/ambarella-nand/bind"
   sleep 2
   echo "dd if=/dev/mtd9 bs=4096 | nc 10.9.9.2 1234"
@@ -196,7 +196,7 @@ NC_PID=$!
 
 echo "[+] Transferring configuration image to camera..."
 (
-  sleep 1
+  sleep 2
   echo "nc 10.9.9.2 1234 > /tmp/adc_new.bin"
   sleep 2
   echo "exit"
@@ -209,13 +209,13 @@ echo "  [✓] Image successfully transferred to camera (/tmp/adc_new.bin)."
 # 10. Erase and write flash on the Dropcam
 echo "[+] Executing flash update on Dropcam..."
 (
-  sleep 1
+  sleep 2
   echo "/usr/sbin/flash_eraseall /dev/mtd9"
   sleep 2
   echo "/usr/sbin/nandwrite -p /dev/mtd9 /tmp/adc_new.bin"
   sleep 2
   echo "echo '=== Flashing Complete! Reboot the camera now. ==='"
-  sleep 1
+  sleep 2
   echo "exit"
 ) | telnet 10.9.9.1 || true
 
