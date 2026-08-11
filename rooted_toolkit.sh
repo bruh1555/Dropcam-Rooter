@@ -80,7 +80,7 @@ elif [ "$ACTION_OPTION" = "2" ]; then
     echo "[+] Writing new Wi-Fi profile to camera..."
     # Generate remote commands
     (
-      sleep 1
+      sleep 2
       echo "cat << 'EOF' > /mnt/dropcam/wpa_supplicant.conf"
       echo "ctrl_interface=/var/run/wpa_supplicant"
       echo "update_config=1"
@@ -91,7 +91,7 @@ elif [ "$ACTION_OPTION" = "2" ]; then
       echo "	key_mgmt=WPA-PSK"
       echo "}"
       echo "EOF"
-      sleep 1
+      sleep 2
       echo "echo '=== Configuration saved! ==='"
       echo "exit"
     ) | telnet "$CAMERA_IP" || true
@@ -119,11 +119,11 @@ elif [ "$ACTION_OPTION" = "3" ]; then
     
     echo "[+] Transferring ie_auto.sh to camera..."
     (
-      sleep 1
+      sleep 2
       echo "nc $HOST_IP 1234 > /mnt/dropcam/ie_auto.sh"
       sleep 2
       echo "chmod +x /mnt/dropcam/ie_auto.sh"
-      sleep 1
+      sleep 2
       echo "echo '=== ie_auto.sh updated! ==='"
       echo "exit"
     ) | telnet "$CAMERA_IP" || true
