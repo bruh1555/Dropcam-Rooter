@@ -140,13 +140,25 @@ echo "  [✓] Configuration partition successfully dumped to host."
 
 # 4. Extract configuration partition template
 echo "[+] Extracting stock configuration partition template..."
-# Jeffersons JFFS2 extraction tool must be installed via pip
-if ! command -v jefferson &> /dev/null; then
-    echo "    Installing jefferson parser via pip..."
-    pip3 install --user jefferson
+# Locate or set up jefferson JFFS2 extraction tool
+JEFFERSON=$(command -v jefferson || true)
+if [ -z "$JEFFERSON" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [ -x "$SCRIPT_DIR/venv/bin/jefferson" ]; then
+        JEFFERSON="$SCRIPT_DIR/venv/bin/jefferson"
+    elif [ -x "$HOME/.local/bin/jefferson" ]; then
+        JEFFERSON="$HOME/.local/bin/jefferson"
+    elif [ -n "$SUDO_USER" ] && [ -x "/home/$SUDO_USER/.local/bin/jefferson" ]; then
+        JEFFERSON="/home/$SUDO_USER/.local/bin/jefferson"
+    else
+        echo "    Setting up Python virtual environment for jefferson..."
+        python3 -m venv "$SCRIPT_DIR/venv"
+        "$SCRIPT_DIR/venv/bin/pip" install jefferson
+        JEFFERSON="$SCRIPT_DIR/venv/bin/jefferson"
+    fi
 fi
 rm -rf "$WORKSPACE_DIR"
-~/.local/bin/jefferson -d "$WORKSPACE_DIR" "$PARENT_DIR/adc_stock.bin"
+"$JEFFERSON" -d "$WORKSPACE_DIR" "$PARENT_DIR/adc_stock.bin"
 
 # 5. Create modified wpa_supplicant.conf
 echo "[+] Configuring Wi-Fi profile..."
